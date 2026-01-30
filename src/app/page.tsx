@@ -1,14 +1,27 @@
-import { getNextSession, getDrivers } from "@/lib/api";
+import { getNextSession, getDrivers, getWeatherData } from "@/lib/api";
 import Link from "next/link";
-import { Driver, Session } from "@/lib/types";
+import { Driver, Session, Weather } from "@/lib/types";
+import CountdownTimer from "@/components/CountdownTimer";
+import WeatherWidget from "@/components/WeatherWidget";
+import SessionTimeDisplay from "@/components/SessionTimeDisplay";
+import { getDriverImage } from "@/lib/image-mapping";
 
 export default async function Home() {
   let session: Session | null = null;
   let drivers: Driver[] = [];
+  let weather: Weather | null = null;
 
   try {
     session = await getNextSession();
-    drivers = session ? await getDrivers(session.session_key) : [];
+    if (session) {
+      // Run parallel fetches for drivers and weather
+      const [driversData, weatherData] = await Promise.all([
+        getDrivers(session.session_key).catch(() => []),
+        getWeatherData(session.session_key).catch(() => null)
+      ]);
+      drivers = driversData;
+      weather = weatherData;
+    }
   } catch (error) {
     console.error("Failed to fetch data for home page:", error);
   }
@@ -16,29 +29,40 @@ export default async function Home() {
   return (
     <div className="space-y-8">
       <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-gray-900">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold">Next Race</h2>
-          <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
-            {session ? session.session_type : "N/A"}
-          </span>
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
+          <div className="flex items-center justify-between w-full md:w-auto">
+            <h2 className="text-xl font-bold">Next Race</h2>
+            <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider md:hidden">
+              {session ? session.session_type : "N/A"}
+            </span>
+          </div>
+          {session && (
+            <div className="hidden md:block">
+               <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
+                {session.session_type}
+              </span>
+            </div>
+          )}
         </div>
+
         {session ? (
           <div>
             <div className="mb-4">
-              <p className="text-2xl font-bold leading-tight mb-1">{session.session_name}</p>
-              <p className="text-gray-600 font-medium">{session.circuit_short_name}, {session.country_name}</p>
+              <div className="flex justify-between items-start">
+                <div>
+                   <p className="text-2xl font-bold leading-tight mb-1">{session.session_name}</p>
+                   <p className="text-gray-600 font-medium">{session.circuit_short_name}, {session.country_name}</p>
+                </div>
+              </div>
+              
+              <div className="mt-4">
+                <CountdownTimer targetDate={session.date_start} sessionType={session.session_type} />
+              </div>
             </div>
             
-            <div className="flex items-center text-gray-500 text-sm bg-gray-50 p-3 rounded-lg">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-              {new Date(session.date_start).toLocaleString(undefined, { 
-                weekday: 'short', 
-                month: 'short', 
-                day: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit' 
-              })}
-            </div>
+            <SessionTimeDisplay dateStart={session.date_start} gmtOffset={session.gmt_offset} />
+
+            <WeatherWidget weather={weather} />
           </div>
         ) : (
           <p className="text-gray-500 italic">No upcoming session found for this season.</p>
@@ -73,15 +97,11 @@ export default async function Home() {
             {drivers.map((driver) => (
               <div key={driver.driver_number} className="flex-shrink-0 w-24 flex flex-col items-center text-center">
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden mb-2 border-2 border-white shadow-sm">
-                   {driver.headshot_url ? (
-                        <img 
-                          src={driver.headshot_url} 
-                          alt={driver.full_name} 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-sm font-bold text-gray-400">{driver.driver_number}</span>
-                      )}
+                  <img 
+                    src={getDriverImage(driver)} 
+                    alt={driver.full_name} 
+                    className="w-full h-full object-cover object-top"
+                  />
                 </div>
                 <p className="font-bold text-sm truncate w-full">{driver.name_acronym}</p>
                 <p className="text-xs text-gray-500 truncate w-full">{driver.team_name}</p>

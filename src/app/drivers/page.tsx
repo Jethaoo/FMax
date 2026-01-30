@@ -1,6 +1,7 @@
 import { getDrivers, getDriversByYear } from "@/lib/api";
 import { Driver } from "@/lib/types";
 import YearSelect from "@/components/YearSelect";
+import { getDriverImage } from "@/lib/image-mapping";
 
 export default async function DriversPage({
   searchParams,
@@ -70,17 +71,11 @@ export default async function DriversPage({
                 {teamData.drivers.map((driver) => (
                   <div key={driver.driver_number} className="p-4 flex items-center space-x-4">
                     <div className="w-12 h-12 bg-gray-100 rounded-full overflow-hidden flex-shrink-0 relative">
-                      {driver.headshot_url ? (
-                        <img 
-                          src={driver.headshot_url} 
-                          alt={driver.full_name} 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="flex items-center justify-center w-full h-full text-sm font-bold text-gray-400">
-                          {driver.name_acronym}
-                        </div>
-                      )}
+                      <img 
+                        src={getDriverImage(driver)} 
+                        alt={driver.full_name} 
+                        className="w-full h-full object-cover object-top"
+                      />
                     </div>
                     <div className="flex-grow">
                       <div className="flex justify-between items-start">

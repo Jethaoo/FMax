@@ -1,5 +1,6 @@
 import { getDriversByYear } from "@/lib/api";
 import { Driver } from "@/lib/types";
+import { getTeamLogo } from "@/lib/image-mapping";
 
 export default async function ConstructorsPage() {
   let allDrivers: Driver[] = [];
@@ -40,7 +41,16 @@ export default async function ConstructorsPage() {
                 className="px-4 py-3 border-l-4 flex justify-between items-center bg-gray-50"
                 style={{ borderLeftColor: `#${team.color}` }}
               >
-                <h2 className="text-lg font-bold text-gray-900">{team.name}</h2>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 flex-shrink-0 bg-white rounded-md p-0.5 border border-gray-100 flex items-center justify-center">
+                    <img 
+                      src={getTeamLogo(team.name)} 
+                      alt={team.name} 
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <h2 className="text-lg font-bold text-gray-900">{team.name}</h2>
+                </div>
               </div>
             <div className="p-4">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Drivers</h3>

@@ -1,4 +1,4 @@
-import { Driver, Session } from "./types";
+import { Driver, Session, Weather } from "./types";
 
 const BASE_URL = "https://api.openf1.org/v1";
 
@@ -62,4 +62,22 @@ export async function getNextSession(): Promise<Session | null> {
   const sortedFutureSessions = futureSessions.sort((a, b) => new Date(a.date_start).getTime() - new Date(b.date_start).getTime());
   
   return sortedFutureSessions[0] || null;
+}
+
+export async function getWeatherData(sessionKey: number): Promise<Weather | null> {
+  const url = `${BASE_URL}/weather?session_key=${sessionKey}`;
+  // We want latest weather, so revalidate frequently or disable cache
+  const res = await fetch(url, { next: { revalidate: 60 } } as RequestInit & { next: { revalidate: number } });
+  
+  if (!res.ok) {
+    console.error(`Failed to fetch weather from ${url}: ${res.status} ${res.statusText}`);
+    return null;
+  }
+  
+  const data: Weather[] = await res.json();
+  
+  if (!data || data.length === 0) return null;
+  
+  // Weather data comes as a time series, we want the latest reading
+  return data[data.length - 1];
 }
