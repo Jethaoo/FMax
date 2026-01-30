@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Titillium_Web } from "next/font/google";
 import "./globals.css";
 import MobileNav from "@/components/MobileNav";
@@ -12,7 +12,13 @@ const titillium = Titillium_Web({
 export const metadata: Metadata = {
   title: "F1 Viewer",
   description: "View Formula 1 2025 Schedule and Standings",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({

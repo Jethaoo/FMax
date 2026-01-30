@@ -1,9 +1,17 @@
 import { getNextSession, getDrivers } from "@/lib/api";
 import Link from "next/link";
+import { Driver, Session } from "@/lib/types";
 
 export default async function Home() {
-  const session = await getNextSession();
-  const drivers = session ? await getDrivers(session.session_key) : [];
+  let session: Session | null = null;
+  let drivers: Driver[] = [];
+
+  try {
+    session = await getNextSession();
+    drivers = session ? await getDrivers(session.session_key) : [];
+  } catch (error) {
+    console.error("Failed to fetch data for home page:", error);
+  }
 
   return (
     <div className="space-y-8">

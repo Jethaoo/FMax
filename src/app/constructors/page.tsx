@@ -1,7 +1,14 @@
 import { getDriversByYear } from "@/lib/api";
+import { Driver } from "@/lib/types";
 
 export default async function ConstructorsPage() {
-  const allDrivers = await getDriversByYear(2025);
+  let allDrivers: Driver[] = [];
+  
+  try {
+    allDrivers = await getDriversByYear(2025);
+  } catch (error) {
+    console.error("Failed to fetch drivers for constructors page:", error);
+  }
   
   // Extract unique teams
   const teamsMap = new Map<string, { name: string; color: string; drivers: string[] }>();

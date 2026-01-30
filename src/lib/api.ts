@@ -9,15 +9,18 @@ export async function getDrivers(sessionKey?: number): Promise<Driver[]> {
   
   const res = await fetch(url, { next: { revalidate: 3600 } } as RequestInit & { next: { revalidate: number } });
   if (!res.ok) {
-    throw new Error("Failed to fetch drivers");
+    console.error(`Failed to fetch drivers from ${url}: ${res.status} ${res.statusText}`);
+    throw new Error(`Failed to fetch drivers: ${res.status} ${res.statusText}`);
   }
   return res.json();
 }
 
 export async function getSessions(year: number = 2025): Promise<Session[]> {
-  const res = await fetch(`${BASE_URL}/sessions?year=${year}`, { next: { revalidate: 3600 } } as RequestInit & { next: { revalidate: number } });
+  const url = `${BASE_URL}/sessions?year=${year}`;
+  const res = await fetch(url, { next: { revalidate: 3600 } } as RequestInit & { next: { revalidate: number } });
   if (!res.ok) {
-    throw new Error("Failed to fetch sessions");
+    console.error(`Failed to fetch sessions from ${url}: ${res.status} ${res.statusText}`);
+    throw new Error(`Failed to fetch sessions: ${res.status} ${res.statusText}`);
   }
   return res.json();
 }
