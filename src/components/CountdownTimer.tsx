@@ -33,7 +33,7 @@ export default function CountdownTimer({ targetDate, sessionType }: CountdownTim
         zero: true,
         delimiter: " ",
         locale: {
-          formatDistance: (token, count) => {
+          formatDistance: (token: string, count: number) => {
             if (token === "xDays") return `${count}d`;
             if (token === "xHours") return `${count}h`;
             if (token === "xMinutes") return `${count}m`;
