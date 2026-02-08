@@ -17,7 +17,7 @@ export default function YearSelect() {
 
   return (
     <div className="mb-6 flex items-center space-x-2">
-      <label htmlFor="year-select" className="font-semibold text-gray-700">Select Season:</label>
+      <label htmlFor="year-select" className="font-semibold text-white">Select Season:</label>
       <select
         id="year-select"
         value={currentYear}

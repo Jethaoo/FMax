@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${titillium.className} bg-gray-50`}>
+      <body className={`${titillium.className} bg-[#15151E]`}>
         <div className="min-h-screen flex flex-col pb-16 md:pb-0">
           <header className="bg-red-600 text-white p-4 shadow-md sticky top-0 z-40">
             <div className="container mx-auto flex justify-between items-center">

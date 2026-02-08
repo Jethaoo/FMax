@@ -18,6 +18,7 @@ const driverImageMap: Record<number, string> = {
   81: "piastri.png",     // Oscar Piastri
   11: "perez.png",       // Sergio Perez
   43: "colapinto.png",   // Franco Colapinto
+  30: "lawson.png",      // Liam Lawson
   27: "hulkenberg.png",  // Nico Hulkenberg (Sauber in 2025)
   77: "bottas.png",      // Valtteri Bottas (If driving)
   24: "zhou.png",        // Guanyu Zhou (If driving)
@@ -27,7 +28,6 @@ const driverImageMap: Record<number, string> = {
   // New/Rookies (Assignments may vary)
   12: "antonelli.png",   // Kimi Antonelli
   87: "bearman.png",     // Oliver Bearman
-  30: "doohan.png",      // Jack Doohan
   // Add others as confirmed
 };
 
@@ -45,8 +45,44 @@ const teamLogoMap: Record<string, string> = {
   // Fallbacks for variations
   "Haas": "haas.png",
   "Sauber": "sauber.png",
-  "Visa Cash App RB": "rb.png",
+  "Racing Bulls": "rb.png",
 };
+
+const carImageMap: Record<string, string> = {
+  "Red Bull Racing": "redbull.png",
+  "Mercedes": "mercedes.png",
+  "Ferrari": "ferrari.png",
+  "McLaren": "mclaren.png",
+  "Aston Martin": "astonmartin.png",
+  "Alpine": "alpine.png",
+  "Williams": "williams.png",
+  "RB": "rb.png",
+  "Kick Sauber": "sauber.png",
+  "Haas F1 Team": "haas.png",
+  // Fallbacks
+  "Haas": "haas.png",
+  "Sauber": "sauber.png",
+  "Racing Bulls": "rb.png",
+};
+
+export function getCarImage(teamName: string): string {
+  if (!teamName) return "/cars/placeholder.svg";
+  
+  // Try exact match
+  let filename = carImageMap[teamName];
+  
+  // Try partial match if not found
+  if (!filename) {
+    const key = Object.keys(carImageMap).find(k => teamName.includes(k) || k.includes(teamName));
+    if (key) filename = carImageMap[key];
+  }
+  
+  if (filename) {
+    return `/cars/2025/${filename}`;
+  }
+  
+  return "/cars/placeholder.svg";
+}
 
 export function getTeamLogo(teamName: string): string {
   if (!teamName) return "/teams/placeholder.svg";

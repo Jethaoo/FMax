@@ -51,26 +51,29 @@ export default async function DriversPage({
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">{year} Drivers</h1>
+        <h1 className="text-3xl font-bold text-white">{year} Drivers</h1>
         <YearSelect />
       </div>
       
       {uniqueDrivers.length === 0 ? (
         <p className="text-gray-600">No drivers found for this season yet.</p>
       ) : (
-        <div className="space-y-8 pb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-4">
           {sortedTeams.map(([teamName, teamData]) => (
-            <section key={teamName} className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+            <section 
+              key={teamName} 
+              className="rounded-xl shadow-sm overflow-hidden border border-gray-100"
+              style={{ backgroundColor: `#${teamData.color}` }}
+            >
               <div 
-                className="px-4 py-3 border-l-4 flex justify-between items-center bg-gray-50"
-                style={{ borderLeftColor: `#${teamData.color}` }}
+                className="px-4 py-3 flex justify-between items-center bg-black/20"
               >
-                <h2 className="text-lg font-bold text-gray-900">{teamName}</h2>
+                <h2 className="text-lg font-bold text-white">{teamName}</h2>
               </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-white/10">
                 {teamData.drivers.map((driver) => (
                   <div key={driver.driver_number} className="p-4 flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full overflow-hidden flex-shrink-0 relative">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full overflow-hidden flex-shrink-0 relative border-2 border-white/50">
                       <img 
                         src={getDriverImage(driver)} 
                         alt={driver.full_name} 
@@ -80,10 +83,10 @@ export default async function DriversPage({
                     <div className="flex-grow">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h3 className="font-bold text-gray-900">{driver.full_name}</h3>
-                          <p className="text-xs text-gray-500 uppercase tracking-wide">{driver.country_code}</p>
+                          <h3 className="font-bold text-white">{driver.full_name}</h3>
+                          <p className="text-xs text-white/80 uppercase tracking-wide">{driver.country_code}</p>
                         </div>
-                        <span className="font-mono text-lg font-bold text-gray-300">#{driver.driver_number}</span>
+                        <span className="font-mono text-lg font-bold text-white/60">#{driver.driver_number}</span>
                       </div>
                     </div>
                   </div>
