@@ -27,7 +27,14 @@ export default async function Home() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
+      <section className="rounded-xl border border-white/10 bg-gradient-to-r from-white/10 to-white/5 p-5 md:p-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-white">F1 Race Hub</h1>
+        <p className="text-sm md:text-base text-gray-300 mt-1">
+          Live race weekend overview, weather, drivers, and full season schedule.
+        </p>
+      </section>
+
       <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-gray-900">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
           <div className="flex items-center justify-between w-full md:w-auto">
@@ -69,8 +76,8 @@ export default async function Home() {
         )}
       </section>
 
-      <section className="grid grid-cols-1 gap-4">
-        <Link href="/drivers" className="flex items-center justify-between p-6 bg-white rounded-xl shadow-sm border border-gray-100 active:scale-[0.98] transition-transform">
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Link href="/drivers" className="flex items-center justify-between p-6 bg-white rounded-xl shadow-sm border border-gray-100 active:scale-[0.98] transition hover:-translate-y-0.5 hover:shadow-md">
           <div>
             <h3 className="text-xl font-bold text-gray-900 mb-1">Drivers</h3>
             <p className="text-sm text-gray-500">View 2025 Grid</p>
@@ -79,13 +86,22 @@ export default async function Home() {
             <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
           </div>
         </Link>
-        <Link href="/constructors" className="flex items-center justify-between p-6 bg-white rounded-xl shadow-sm border border-gray-100 active:scale-[0.98] transition-transform">
+        <Link href="/constructors" className="flex items-center justify-between p-6 bg-white rounded-xl shadow-sm border border-gray-100 active:scale-[0.98] transition hover:-translate-y-0.5 hover:shadow-md">
           <div>
             <h3 className="text-xl font-bold text-gray-900 mb-1">Constructors</h3>
             <p className="text-sm text-gray-500">Team Standings</p>
           </div>
           <div className="bg-red-50 p-2 rounded-full">
              <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+          </div>
+        </Link>
+        <Link href="/schedule" className="flex items-center justify-between p-6 bg-white rounded-xl shadow-sm border border-gray-100 active:scale-[0.98] transition hover:-translate-y-0.5 hover:shadow-md">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">Schedule</h3>
+            <p className="text-sm text-gray-500">Upcoming race weekends</p>
+          </div>
+          <div className="bg-red-50 p-2 rounded-full">
+            <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           </div>
         </Link>
       </section>

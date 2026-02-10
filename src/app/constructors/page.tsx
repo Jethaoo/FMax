@@ -33,19 +33,19 @@ export default async function ConstructorsPage() {
 
   return (
     <div className="pb-4">
-      <h1 className="text-2xl font-bold mb-6 text-white">2025 Constructors</h1>
+      <h1 className="text-3xl font-bold mb-6 text-white">2025 Constructors</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {teams.map((team) => (
           <div 
             key={team.name} 
-            className="rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+            className="rounded-xl shadow-sm border border-gray-100 overflow-hidden transition hover:shadow-lg hover:-translate-y-0.5"
             style={{ backgroundColor: `#${team.color}` }}
           >
              <div 
                 className="px-4 py-3 flex justify-between items-center bg-black/20"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center">
+                  <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center opacity-70">
                     <img 
                       src={getTeamLogo(team.name)} 
                       alt={team.name} 

@@ -49,20 +49,22 @@ export default async function DriversPage({
   const sortedTeams = Object.entries(driversByTeam).sort((a, b) => a[0].localeCompare(b[0]));
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
+    <div className="pb-4">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-6">
         <h1 className="text-3xl font-bold text-white">{year} Drivers</h1>
         <YearSelect />
       </div>
       
       {uniqueDrivers.length === 0 ? (
-        <p className="text-gray-600">No drivers found for this season yet.</p>
+        <div className="rounded-xl border border-white/10 bg-white/5 p-5 text-gray-300">
+          No drivers found for this season yet.
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-4">
           {sortedTeams.map(([teamName, teamData]) => (
             <section 
               key={teamName} 
-              className="rounded-xl shadow-sm overflow-hidden border border-gray-100"
+              className="rounded-xl shadow-sm overflow-hidden border border-gray-100 transition hover:shadow-lg hover:-translate-y-0.5"
               style={{ backgroundColor: `#${teamData.color}` }}
             >
               <div 
