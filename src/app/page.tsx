@@ -1,26 +1,25 @@
-import { getNextSession, getDrivers, getWeatherData } from "@/lib/api";
+import { getNextSession, getDrivers } from "@/lib/api";
 import Link from "next/link";
-import { Driver, Session, Weather } from "@/lib/types";
+import { Driver, Session } from "@/lib/types";
 import CountdownTimer from "@/components/CountdownTimer";
-import WeatherWidget from "@/components/WeatherWidget";
 import SessionTimeDisplay from "@/components/SessionTimeDisplay";
 import { getDriverImage } from "@/lib/image-mapping";
+
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   let session: Session | null = null;
   let drivers: Driver[] = [];
-  let weather: Weather | null = null;
 
   try {
     session = await getNextSession();
     if (session) {
-      // Run parallel fetches for drivers and weather
-      const [driversData, weatherData] = await Promise.all([
-        getDrivers(session.session_key).catch(() => []),
-        getWeatherData(session.session_key).catch(() => null)
-      ]);
-      drivers = driversData;
-      weather = weatherData;
+      drivers = await getDrivers(session.session_key);
+
+      // If in-progress session data is restricted by API auth, fall back to general drivers list.
+      if (drivers.length === 0) {
+        drivers = await getDrivers().catch(() => []);
+      }
     }
   } catch (error) {
     console.error("Failed to fetch data for home page:", error);
@@ -31,7 +30,7 @@ export default async function Home() {
       <section className="rounded-xl border border-white/10 bg-gradient-to-r from-white/10 to-white/5 p-5 md:p-6">
         <h1 className="text-2xl md:text-3xl font-bold text-white">F1 Race Hub</h1>
         <p className="text-sm md:text-base text-gray-300 mt-1">
-          Live race weekend overview, weather, drivers, and full season schedule.
+          Live race weekend overview, drivers, and full season schedule.
         </p>
       </section>
 
@@ -68,8 +67,6 @@ export default async function Home() {
             </div>
             
             <SessionTimeDisplay dateStart={session.date_start} gmtOffset={session.gmt_offset} />
-
-            <WeatherWidget weather={weather} />
           </div>
         ) : (
           <p className="text-gray-500 italic">No upcoming session found for this season.</p>
@@ -116,6 +113,8 @@ export default async function Home() {
                   <img 
                     src={getDriverImage(driver)} 
                     alt={driver.full_name} 
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover object-top"
                   />
                 </div>

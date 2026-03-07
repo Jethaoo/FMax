@@ -1,5 +1,11 @@
-import { getSessions } from "@/lib/api";
+import { getSessionsWithFallback } from "@/lib/api";
 import { Session } from "@/lib/types";
+import Link from "next/link";
+import DateTimeText from "@/components/timezone/DateTimeText";
+import TimezoneModeHint from "@/components/timezone/TimezoneModeHint";
+import TimezoneToggle from "@/components/timezone/TimezoneToggle";
+import SessionStateBadge from "@/components/schedule/SessionStateBadge";
+import WeekendStateBadge from "@/components/schedule/WeekendStateBadge";
 
 function getSessionBadgeClass(sessionType: string): string {
   const type = sessionType.toLowerCase();
@@ -11,11 +17,12 @@ function getSessionBadgeClass(sessionType: string): string {
 }
 
 export default async function SchedulePage() {
-  const sessions = await getSessions(2026);
+  const currentYear = new Date().getFullYear();
+  const { sessions, year } = await getSessionsWithFallback([2026, currentYear, currentYear - 1, 2025]);
   if (!sessions.length) {
     return (
       <div className="pb-8">
-        <h1 className="text-3xl font-bold text-white mb-6">2026 Season Schedule</h1>
+        <h1 className="text-3xl font-bold text-white mb-6">Season Schedule</h1>
         <div className="rounded-xl border border-white/10 bg-white/5 p-5 text-gray-300">
           No schedule is available yet. Please check again later.
         </div>
@@ -23,6 +30,7 @@ export default async function SchedulePage() {
     );
   }
   const meetingsMap = new Map<number, {
+    meeting_key: number;
     name: string;
     location: string;
     country_name: string;
@@ -34,6 +42,7 @@ export default async function SchedulePage() {
   sessions.forEach(session => {
     if (!meetingsMap.has(session.meeting_key)) {
       meetingsMap.set(session.meeting_key, {
+        meeting_key: session.meeting_key,
         name: session.session_name.replace(" - Practice 1", "").replace(" - Practice 2", "").replace(" - Practice 3", "").replace(" - Qualifying", "").replace(" - Sprint", "").replace(" - Race", ""),
         location: session.location,
         country_name: session.country_name,
@@ -51,11 +60,14 @@ export default async function SchedulePage() {
 
   return (
     <div className="pb-8">
-      <h1 className="text-3xl font-bold text-white mb-6">2026 Season Schedule</h1>
+      <h1 className="text-3xl font-bold text-white mb-6">{year ?? "Current"} Season Schedule</h1>
+      <div className="md:hidden mb-4">
+        <TimezoneToggle />
+      </div>
       <p className="text-gray-300 mb-6">Testing and Grand Prix weekends in chronological order.</p>
       <div className="space-y-6">
         {meetings.map((meeting, index) => {
-          const sortedSessions = meeting.sessions.sort((a, b) => new Date(a.date_start).getTime() - new Date(b.date_start).getTime());
+          const sortedSessions = [...meeting.sessions].sort((a, b) => new Date(a.date_start).getTime() - new Date(b.date_start).getTime());
           const firstSession = sortedSessions[0];
           const lastSession = sortedSessions[sortedSessions.length - 1];
           
@@ -83,7 +95,11 @@ export default async function SchedulePage() {
           }
 
           return (
-            <div key={meeting.date_start} className="rounded-2xl shadow-sm border border-gray-100 overflow-hidden bg-white transition hover:shadow-md">
+            <Link
+              key={meeting.meeting_key}
+              href={`/schedule/${meeting.meeting_key}`}
+              className="block rounded-2xl shadow-sm border border-gray-100 overflow-hidden bg-white transition hover:shadow-md hover:-translate-y-0.5"
+            >
               <div className="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div className="flex items-center space-x-3 md:space-x-4">
                    <div className={`${roundClass} text-xs font-bold px-2 py-1 rounded`}>
@@ -94,7 +110,8 @@ export default async function SchedulePage() {
                       <p className="text-sm text-gray-500 font-medium">{meeting.circuit_short_name}, {meeting.location}</p>
                    </div>
                 </div>
-                <div className="mt-1 md:mt-0 flex items-center bg-white px-3 py-1 rounded-full border border-gray-200 shadow-sm">
+                <div className="mt-1 md:mt-0 flex items-center gap-2 bg-white px-3 py-1 rounded-full border border-gray-200 shadow-sm">
+                  <WeekendStateBadge startDate={firstSession.date_start} endDate={lastSession.date_end} />
                   <span className="text-sm font-bold text-gray-700">
                     {dateRange}
                   </span>
@@ -108,18 +125,19 @@ export default async function SchedulePage() {
                         <span className={`inline-flex w-fit px-2 py-0.5 rounded-full text-[10px] font-bold uppercase mb-2 tracking-wide ${getSessionBadgeClass(session.session_type)}`}>
                           {session.session_type}
                         </span>
+                        <SessionStateBadge startDate={session.date_start} endDate={session.date_end} />
                         <span className="text-sm font-semibold text-gray-900">
-                          {new Date(session.date_start).toLocaleDateString(undefined, { weekday: 'short' })}
+                          <DateTimeText date={session.date_start} gmtOffset={session.gmt_offset} variant="weekday" />
                         </span>
                         <span className="text-sm text-gray-600">
-                           {new Date(session.date_start).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                          <DateTimeText date={session.date_start} gmtOffset={session.gmt_offset} variant="time" />
                         </span>
-                        <span className="text-[11px] text-gray-400 mt-1">Local time</span>
+                        <TimezoneModeHint />
                      </div>
                   ))}
                 </div>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

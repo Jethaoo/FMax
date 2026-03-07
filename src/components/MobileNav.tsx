@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Users, Trophy, Calendar } from "lucide-react";
+import { Home, Users, Trophy, Calendar, MonitorPlay } from "lucide-react";
 
 export default function MobileNav() {
   const pathname = usePathname();
@@ -12,6 +12,7 @@ export default function MobileNav() {
     { name: "Schedule", href: "/schedule", icon: Calendar },
     { name: "Drivers", href: "/drivers", icon: Users },
     { name: "Teams", href: "/constructors", icon: Trophy },
+    { name: "Stream", href: "/stream", icon: MonitorPlay },
   ];
 
   return (
@@ -24,9 +25,8 @@ export default function MobileNav() {
             <Link
               key={item.name}
               href={item.href}
-              className={`flex flex-col items-center justify-center w-full h-full space-y-1 rounded-lg transition ${
-                isActive ? "text-red-400 bg-red-500/10" : "text-gray-300"
-              }`}
+              className={`flex flex-col items-center justify-center w-full h-full space-y-1 rounded-lg transition ${isActive ? "text-red-400 bg-red-500/10" : "text-gray-300"
+                }`}
             >
               <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
               <span className="text-xs font-medium">{item.name}</span>

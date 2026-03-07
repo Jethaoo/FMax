@@ -79,6 +79,8 @@ export default async function DriversPage({
                       <img 
                         src={getDriverImage(driver)} 
                         alt={driver.full_name} 
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover object-top"
                       />
                     </div>

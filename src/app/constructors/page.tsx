@@ -1,14 +1,34 @@
-import { getDriversByYear } from "@/lib/api";
+import { getDrivers, getDriversByYear } from "@/lib/api";
 import { Driver } from "@/lib/types";
 import { getTeamLogo, getCarImage } from "@/lib/image-mapping";
 
 export default async function ConstructorsPage() {
   let allDrivers: Driver[] = [];
+  const currentYear = new Date().getFullYear();
+  const yearCandidates = Array.from(new Set([currentYear, currentYear - 1, 2025]));
+  let displayYear = currentYear;
   
-  try {
-    allDrivers = await getDriversByYear(2025);
-  } catch (error) {
-    console.error("Failed to fetch drivers for constructors page:", error);
+  // Try likely active seasons first so deployed pages stay populated.
+  for (const year of yearCandidates) {
+    try {
+      const driversForYear = await getDriversByYear(year);
+      if (driversForYear.length > 0) {
+        allDrivers = driversForYear;
+        displayYear = year;
+        break;
+      }
+    } catch (error) {
+      console.error(`Failed to fetch drivers for constructors page (${year}):`, error);
+    }
+  }
+
+  // Last-resort fallback to generic drivers endpoint.
+  if (allDrivers.length === 0) {
+    try {
+      allDrivers = await getDrivers();
+    } catch (error) {
+      console.error("Failed to fetch generic drivers for constructors page:", error);
+    }
   }
   
   // Extract unique teams
@@ -31,9 +51,20 @@ export default async function ConstructorsPage() {
 
   const teams = Array.from(teamsMap.values()).sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
+  if (teams.length === 0) {
+    return (
+      <div className="pb-4">
+        <h1 className="text-3xl font-bold mb-6 text-white">{displayYear} Constructors</h1>
+        <div className="rounded-xl border border-white/10 bg-white/5 p-5 text-gray-300">
+          Constructors data is temporarily unavailable. Please refresh in a few minutes.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="pb-4">
-      <h1 className="text-3xl font-bold mb-6 text-white">2025 Constructors</h1>
+      <h1 className="text-3xl font-bold mb-6 text-white">{displayYear} Constructors</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {teams.map((team) => (
           <div 
@@ -49,6 +80,8 @@ export default async function ConstructorsPage() {
                     <img 
                       src={getTeamLogo(team.name)} 
                       alt={team.name} 
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-contain"
                     />
                   </div>
@@ -63,6 +96,8 @@ export default async function ConstructorsPage() {
                  <img 
                     src={getCarImage(team.name)} 
                     alt={`${team.name} car`}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-contain object-left pl-4"
                   />
               </div>
