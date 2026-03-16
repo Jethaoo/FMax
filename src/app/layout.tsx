@@ -6,7 +6,7 @@ import Link from "next/link";
 import { TimezoneProvider } from "@/components/timezone/TimezoneContext";
 import TimezoneToggle from "@/components/timezone/TimezoneToggle";
 
-const titillium = Titillium_Web({ 
+const titillium = Titillium_Web({
   weight: ["200", "300", "400", "600", "700", "900"],
   subsets: ["latin"],
   display: "swap",
@@ -43,6 +43,15 @@ export default function RootLayout({
                   <span className="h-2.5 w-2.5 rounded-full bg-white/90" />
                   F1 Viewer
                 </Link>
+                <Link
+                  href="https://github.com/Jethaoo/FMax"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="md:hidden flex items-center gap-1.5 text-white/80 hover:text-white transition-colors"
+                  aria-label="GitHub"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" /><path d="M9 18c-4.51 2-5-2-7-2" /></svg>
+                </Link>
                 <div className="hidden md:flex items-center gap-4">
                   <nav className="flex items-center gap-2 font-semibold text-sm">
                     <Link href="/" className="px-3 py-1.5 rounded-md hover:bg-white/15 transition-colors">Home</Link>
@@ -50,6 +59,10 @@ export default function RootLayout({
                     <Link href="/constructors" className="px-3 py-1.5 rounded-md hover:bg-white/15 transition-colors">Constructors</Link>
                     <Link href="/schedule" className="px-3 py-1.5 rounded-md hover:bg-white/15 transition-colors">Schedule</Link>
                     <Link href="/stream" className="px-3 py-1.5 rounded-md hover:bg-white/15 transition-colors">Stream</Link>
+                    <Link href="https://github.com/Jethaoo/FMax" target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-md hover:bg-white/15 transition-colors flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-github"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" /><path d="M9 18c-4.51 2-5-2-7-2" /></svg>
+                      GitHub
+                    </Link>
                   </nav>
                   <TimezoneToggle />
                 </div>

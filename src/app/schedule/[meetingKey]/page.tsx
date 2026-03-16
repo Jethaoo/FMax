@@ -102,34 +102,18 @@ export default async function ScheduleDetailPage({ params }: { params: { meeting
           </div>
         </div>
 
-        {(meeting?.circuit_image || meeting?.circuit_info_url) && (
-          <div className="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
-            {meeting?.circuit_image ? (
-              <div className="lg:col-span-2 rounded-lg border border-gray-100 bg-gray-50 p-3">
-                <p className="text-xs text-gray-500 uppercase tracking-wide font-bold mb-2">Circuit Image</p>
-                <img
-                  src={meeting.circuit_image}
-                  alt={`${meeting.circuit_short_name} layout`}
-                  className="w-full h-44 object-contain bg-white rounded border border-gray-100"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-            ) : null}
-            {meeting?.circuit_info_url ? (
-              <div className="rounded-lg border border-gray-100 bg-gray-50 p-3 flex flex-col">
-                <p className="text-xs text-gray-500 uppercase tracking-wide font-bold mb-2">Detailed Circuit Data</p>
-                <p className="text-sm text-gray-600 mb-3">Provided by MultiViewer / FastF1-compatible JSON.</p>
-                <a
-                  href={meeting.circuit_info_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex w-fit items-center rounded-md bg-gray-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-black transition"
-                >
-                  Open circuit_info_url
-                </a>
-              </div>
-            ) : null}
+        {meeting?.circuit_image && (
+          <div className="mt-4">
+            <div className="rounded-lg border border-gray-100 bg-gray-50 p-3">
+              <p className="text-xs text-gray-500 uppercase tracking-wide font-bold mb-2">Circuit Image</p>
+              <img
+                src={meeting.circuit_image}
+                alt={`${meeting.circuit_short_name} layout`}
+                className="w-full h-auto max-h-96 object-contain bg-white rounded border border-gray-100"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
           </div>
         )}
       </section>

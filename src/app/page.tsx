@@ -1,26 +1,16 @@
-import { getNextSession, getDrivers } from "@/lib/api";
+import { getNextSession } from "@/lib/api";
 import Link from "next/link";
-import { Driver, Session } from "@/lib/types";
+import { Session } from "@/lib/types";
 import CountdownTimer from "@/components/CountdownTimer";
 import SessionTimeDisplay from "@/components/SessionTimeDisplay";
-import { getDriverImage } from "@/lib/image-mapping";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   let session: Session | null = null;
-  let drivers: Driver[] = [];
 
   try {
     session = await getNextSession();
-    if (session) {
-      drivers = await getDrivers(session.session_key);
-
-      // If in-progress session data is restricted by API auth, fall back to general drivers list.
-      if (drivers.length === 0) {
-        drivers = await getDrivers().catch(() => []);
-      }
-    }
   } catch (error) {
     console.error("Failed to fetch data for home page:", error);
   }
@@ -44,7 +34,7 @@ export default async function Home() {
           </div>
           {session && (
             <div className="hidden md:block">
-               <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
+              <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
                 {session.session_type}
               </span>
             </div>
@@ -56,16 +46,16 @@ export default async function Home() {
             <div className="mb-4">
               <div className="flex justify-between items-start">
                 <div>
-                   <p className="text-2xl font-bold leading-tight mb-1">{session.session_name}</p>
-                   <p className="text-gray-600 font-medium">{session.circuit_short_name}, {session.country_name}</p>
+                  <p className="text-2xl font-bold leading-tight mb-1">{session.session_name}</p>
+                  <p className="text-gray-600 font-medium">{session.circuit_short_name}, {session.country_name}</p>
                 </div>
               </div>
-              
+
               <div className="mt-4">
                 <CountdownTimer targetDate={session.date_start} sessionType={session.session_type} />
               </div>
             </div>
-            
+
             <SessionTimeDisplay dateStart={session.date_start} gmtOffset={session.gmt_offset} />
           </div>
         ) : (
@@ -73,7 +63,7 @@ export default async function Home() {
         )}
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Link href="/drivers" className="flex items-center justify-between p-6 bg-white rounded-xl shadow-sm border border-gray-100 active:scale-[0.98] transition hover:-translate-y-0.5 hover:shadow-md">
           <div>
             <h3 className="text-xl font-bold text-gray-900 mb-1">Drivers</h3>
@@ -89,7 +79,7 @@ export default async function Home() {
             <p className="text-sm text-gray-500">Team Standings</p>
           </div>
           <div className="bg-red-50 p-2 rounded-full">
-             <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
           </div>
         </Link>
         <Link href="/schedule" className="flex items-center justify-between p-6 bg-white rounded-xl shadow-sm border border-gray-100 active:scale-[0.98] transition hover:-translate-y-0.5 hover:shadow-md">
@@ -101,30 +91,16 @@ export default async function Home() {
             <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           </div>
         </Link>
-      </section>
-
-      {session && drivers.length > 0 && (
-        <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-gray-900">
-          <h2 className="text-xl font-bold mb-4">Drivers in Session</h2>
-          <div className="flex overflow-x-auto space-x-4 pb-2 -mx-4 px-4 scrollbar-hide">
-            {drivers.map((driver) => (
-              <div key={driver.driver_number} className="flex-shrink-0 w-24 flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden mb-2 border-2 border-white shadow-sm">
-                  <img 
-                    src={getDriverImage(driver)} 
-                    alt={driver.full_name} 
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover object-top"
-                  />
-                </div>
-                <p className="font-bold text-sm truncate w-full">{driver.name_acronym}</p>
-                <p className="text-xs text-gray-500 truncate w-full">{driver.team_name}</p>
-              </div>
-            ))}
+        <Link href="/stream" className="flex items-center justify-between p-6 bg-white rounded-xl shadow-sm border border-gray-100 active:scale-[0.98] transition hover:-translate-y-0.5 hover:shadow-md">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">Stream</h3>
+            <p className="text-sm text-gray-500">Live coverage</p>
           </div>
-        </section>
-      )}
+          <div className="bg-red-50 p-2 rounded-full">
+            <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+        </Link>
+      </section>
     </div>
   );
 }
